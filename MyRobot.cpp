@@ -1,50 +1,76 @@
 #include "WPILib.h"
 
 /**
- * This is a demo program showing the use of the RobotBase class.
- * The SimpleRobot class is the base of a robot application that will automatically call your
- * Autonomous and OperatorControl methods at the right time as controlled by the switches on
- * the driver station or the field controls.
+ * Code for Team 5338 District III robotics
  */ 
+
+//Defines to allow easy changing of ports
+//Defines for each controller
+#DEFINE LEFTJ 1
+#DEFINE RIGHTJ 2
+#DEFINE FUNCJ 2
+//Defines for each motor
+#DEFINE DRIVEMOTORL 1
+#DEFINE DRIVEMOTORR 2
+#DEFINE BALLMOTOR 7
+
 class RobotDemo : public SimpleRobot {
 	RobotDrive myRobot; // robot drive system
-	Joystick left, right, func; //only joystick
+	Joystick left, right, func; // only joystick
 	Victor ballMotor;
-
-public:
-	RobotDemo():
-		myRobot(1, 2),	// these must be initialized in the same order
-		left(1),		// as they are declared above.
-		right(2),
-		func(2),
-		ballMotor(7) 
-	{
+	
+public: // These Methods can be accesed by other code
+	
+	//The constructor for the class, it is run before any other code
+	//it uses an initializer list to initalize variables used by this class
+	
+	RobotDemo(): 
+		myRobot(DRIVEMOTORL, DRIVEMOTORR),  // init drive system with both motors
+		left(LEFTJ),  // init joysticks, left drive,
+		right(RIGHTJ),// right drive,
+		func(FUNCJ),  // other functions
+		ballMotor(BALLMOTOR) { // Motor used to bring in the ball
 		myRobot.SetExpiration(0.1);
 	}
-
-	/**
-	 * Drive left & right motors for 2 seconds then stop
-	 */
+	
+	// This code runs during autonomous
+	// It does nothing right now
+	
 	void Autonomous() {
-		/*myRobot.SetSafetyEnabled(false);
-		myRobot.Drive(-0.5, 0.0); 	// drive forwards half speed
-		Wait(2.0); 				//    for 2 seconds
-		myRobot.Drive(0.0, 0.0); 	// stop robot*/
+		//We haven't programmed autonomous yet
+		
+		myRobot.SetSafetyEnabled(false);
 	}
-
-	/**
-	 * Runs the motors with arcade steering. 
-	 */
+	
+	// This code runs during the tele-operated period
+	// Runs the motors with tank steering
+	// Also runs the ball pickup motor when the tigger is pressed
+	
 	void OperatorControl() {
+		
 		myRobot.SetSafetyEnabled(true);
+		
+		float scaleFactor; // Factor to scale the joystick values by
+		float leftpow,rightpow; // Power for the left and right motors
+		
 		while (IsOperatorControl()) {
-			myRobot.TankDrive(left.GetY(),right.GetY()); // drive with arcade style (use right stick)
-			if (func.GetRawButton(1)) {
-				ballMotor.Set(0.5);
-				//printf("Function: %f",func.GetZ());
-			} else {
-				ballMotor.Set(0.0);
-			}
+		  
+		  if (left.GetRawButton(1)) // if the left trigger is held
+		    scaleFactor = 0.5; // scale the speed by half, allows for precision movement
+		  else
+		    scaleFactor = 1.0; // else don't scale, allows for speed
+		  
+		  //set the power for the to the Y-axes of the Joystick multiplied by the scale factor
+		  leftpow = left.getY()*scaleFactor;
+		  rightpow = right.getY()*scaleFactor;
+		  
+			myRobot.TankDrive(leftpow,rightpow); // drive tank style
+			
+			if (func.GetRawButton(1)) // if the trigger on the function joystick is pressed
+				ballMotor.Set(0.5); // run the ball pickup motor
+			else
+				ballMotor.Set(0.0); // else don't run the motor
+			
 			Wait(0.005);				// wait for a motor update time
 		}
 	}
@@ -58,4 +84,3 @@ public:
 };
 
 START_ROBOT_CLASS(RobotDemo);
-
