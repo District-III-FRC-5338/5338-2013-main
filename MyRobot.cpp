@@ -6,13 +6,13 @@
 
 //Defines to allow easy changing of ports
 //Defines for each controller
-#DEFINE LEFTJ 1
-#DEFINE RIGHTJ 2
-#DEFINE FUNCJ 3
+#define LEFTJ 1
+#define RIGHTJ 2
+#define FUNCJ 3
 //Defines for each motor
-#DEFINE DRIVEMOTORL 1
-#DEFINE DRIVEMOTORR 2
-#DEFINE BALLMOTOR 7
+#define DRIVEMOTORL 1
+#define DRIVEMOTORR 2
+#define BALLMOTOR 7
 
 class RobotDemo : public SimpleRobot {
   RobotDrive myRobot; // robot drive system
@@ -61,8 +61,8 @@ public: // These Methods can be accesed by other code
         scaleFactor = 0.5; // else let us drive precisely
       
       //set the power for the to the Y-axes of the Joystick multiplied by the scale factor
-      leftpow = left.getY()*scaleFactor;
-      rightpow = right.getY()*scaleFactor;
+      leftpow = left.GetY()*scaleFactor;
+      rightpow = right.GetY()*scaleFactor;
       
       if (right.GetRawButton(1))
         leftpow = rightpow; // If right trigger is held, let us drive straight
@@ -70,7 +70,7 @@ public: // These Methods can be accesed by other code
       myRobot.TankDrive(leftpow,rightpow); // drive tank style
       
       // safety override for secondary driver
-      if (func.getRawButton(5)) // if button 5 on the control joystick is pressed
+      if (func.GetRawButton(5)) // if button 5 on the control joystick is pressed
         myRobot.TankDrive(0.0,0.0); // stop the motors
       if (func.GetRawButton(1)) // if the trigger on the function joystick is pressed
         ballMotor.Set(0.5); // run the ball pickup motor
