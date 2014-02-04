@@ -13,11 +13,18 @@
 #define DRIVEMOTORL 1
 #define DRIVEMOTORR 2
 #define BALLMOTOR 7
+//Pneumatic defines
+#define COMP_RELAY 1 // The compressor's spike relay
+#define COMP_SWITCH 2 // The compressor's pressure switch
+#define PICKUPARM 3
 
 class RobotDemo : public SimpleRobot {
+
   RobotDrive myRobot; // robot drive system
   Joystick left, right, func; // only joystick
   Victor ballMotor;
+  Relay pickupArm;
+  Compressor compress;
   
 public: // These Methods can be accesed by other code
   
@@ -29,7 +36,10 @@ public: // These Methods can be accesed by other code
     left(LEFTJ),  // init joysticks, left drive,
     right(RIGHTJ),// right drive,
     func(FUNCJ),  // other functions
-    ballMotor(BALLMOTOR) { // Motor used to bring in the ball
+    ballMotor(BALLMOTOR), // Motor used to bring in the ball
+    pickupArm(PICKUPARM), // Pnuematic relay for the pickup armature
+    compress(COMP_SWITCH, COMP_RELAY) { // The compressor 
+    compress.Start();
     myRobot.SetExpiration(0.1);
   }
   
@@ -80,7 +90,7 @@ public: // These Methods can be accesed by other code
       /* This code is for when we add the feeder to the robot
        * However it is not ready yet so I have disabled it.
       if (func.GetRawButton(2)) { // if button 2 is pressed
-        // move ball feeder up
+        pickupArm
       } else if (func.GetRawButton(3)) { // else if button 3 is pressed
         // move ball feeder down
       } else {
