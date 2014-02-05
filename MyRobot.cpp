@@ -9,22 +9,33 @@
 #define LEFTJ 1
 #define RIGHTJ 2
 #define FUNCJ 3
+
+//Joystick Buttons
+#define BALLCHARGE 6
+#define BALLLAUNCH 7
+
+#define CCLIMITA 1
+#define CCLIMITB 2
+
 //Defines for each motor
 #define DRIVEMOTORL 1
 #define DRIVEMOTORR 2
 #define BALLMOTOR 7
+#define CCMOTOR 6
+
 //Pneumatic defines
-#define COMP_RELAY 1 // The compressor's spike relay
-#define COMP_SWITCH 2 // The compressor's pressure switch
-#define PICKUPARM 3
+#define COMP_RELAY 5 // The compressor's spike relay
+#define COMP_SWITCH 1 // The compressor's pressure switch
+#define PICKUPARM 2
 
 class RobotDemo : public SimpleRobot {
 
   RobotDrive myRobot; // robot drive system
   Joystick left, right, func; // only joystick
-  Victor ballMotor;
+  Victor ballMotor, ccMotor;
   Relay pickupArm;
   Compressor compress;
+  DigitalInput ccLimitA,ccLimitB; // limit switches for the Choo Choo
   
 public: // These Methods can be accesed by other code
   
@@ -36,9 +47,10 @@ public: // These Methods can be accesed by other code
     left(LEFTJ),  // init joysticks, left drive,
     right(RIGHTJ),// right drive,
     func(FUNCJ),  // other functions
-    ballMotor(BALLMOTOR), // Motor used to bring in the ball
+    ballMotor(BALLMOTOR), ccMotor(CCMOTOR), // Motor used to bring in the ball fire it
     pickupArm(PICKUPARM), // Pnuematic relay for the pickup armature
-    compress(COMP_SWITCH, COMP_RELAY) { // The compressor 
+    compress(COMP_SWITCH, COMP_RELAY), // The compressor 
+    ccLimitA(CCLIMITA),ccLimitB(CCLIMITB) { // limit switches
     compress.Start();
     myRobot.SetExpiration(0.1);
   }
@@ -64,6 +76,16 @@ public: // These Methods can be accesed by other code
     float leftpow,rightpow; // Power for the left and right motors
     
     while (IsOperatorControl()) {
+      
+      /* Launch Codes, not activated yet
+      if (func.GetRawButton(BALLCHARGE) && !(ccLimitA.Get()||ccLimitB.Get())) {
+        ccMotor.Set(0.75);
+      } else if (func.GetRawButton(BALLLAUNCH) && (ccLimitA.Get()||ccLimitB.Get())) {
+        ccMotor.Set(0.75);
+      } else {
+        ccMotor.Set(0);
+      }
+      */
       
       if (left.GetRawButton(1)) // if the left trigger is held
         scaleFactor = 1.0; // TURBO MODE
