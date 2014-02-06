@@ -27,13 +27,14 @@
 #define COMP_RELAY 5 // The compressor's spike relay
 #define COMP_SWITCH 1 // The compressor's pressure switch
 #define PICKUPARM 2
+#define PICKUPARMP 3 
 
 class RobotDemo : public SimpleRobot {
 
   RobotDrive myRobot; // robot drive system
   Joystick left, right, func; // only joystick
   Victor ballMotor, ccMotor;
-  Relay pickupArm;
+  Relay pickupArmPull, pickupArmPush;
   Compressor compress;
   DigitalInput ccLimitA,ccLimitB; // limit switches for the Choo Choo
   
@@ -48,7 +49,8 @@ public: // These Methods can be accesed by other code
     right(RIGHTJ),// right drive,
     func(FUNCJ),  // other functions
     ballMotor(BALLMOTOR), ccMotor(CCMOTOR), // Motor used to bring in the ball fire it
-    pickupArm(PICKUPARM), // Pnuematic relay for the pickup armature
+    pickupArmPull(PICKUPARM),
+    pickupArmPush(PICKUPARMP),// Pnuematic relay for the pickup armature
     compress(COMP_SWITCH, COMP_RELAY), // The compressor 
     ccLimitA(CCLIMITA),ccLimitB(CCLIMITB) { // limit switches
     compress.Start();
@@ -112,9 +114,9 @@ public: // These Methods can be accesed by other code
       /* This code is for when we add the feeder to the robot
        * However it is not ready yet so I have disabled it.
       if (func.GetRawButton(2)) { // if button 2 is pressed
-        pickupArm
+        pickupArmPull
       } else if (func.GetRawButton(3)) { // else if button 3 is pressed
-        // move ball feeder down
+        pickupArmPush// move ball feeder down
       } else {
         // don't move feeder
       } */
