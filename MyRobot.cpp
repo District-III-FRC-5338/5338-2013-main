@@ -62,7 +62,10 @@ public: // These Methods can be accesed by other code
   
   void Autonomous() {
     //We haven't programmed autonomous yet
-    
+    //Quick Autonomous code :D 
+	//Lets just move forward... 
+	myRobot.TankDrive(.5, .5); 
+	Wait(3); 
     myRobot.SetSafetyEnabled(false);
   }
   
