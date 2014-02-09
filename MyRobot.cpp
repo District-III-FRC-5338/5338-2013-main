@@ -1,7 +1,8 @@
-#include "WPILib.h"
-
+#include <WPILib.h>
+#include <Utility.h>
+#include <Relay.h> 
 /**
- * Code for Team 5338 District III robotics
+ * Code for Team 5338 RoboLoCos robotics
  */ 
 
 //Defines to allow easy changing of ports
@@ -11,10 +12,13 @@
 #define FUNCJ 3
 
 //Joystick Buttons
-#define BALLCHARGE 6
+#define BALLCHARGE 4
 #define BALLLAUNCH 7
+#define PICKUPPUSH 5
+#define PICKUPPULL 3
+#define SPINBALLS  1
 
-#define CCLIMITA 1
+#define CCLIMITA 3
 #define CCLIMITB 2
 
 //Defines for each motor
@@ -24,19 +28,17 @@
 #define CCMOTOR 6
 
 //Pneumatic defines
-#define COMP_RELAY 5 // The compressor's spike relay
-#define COMP_SWITCH 1 // The compressor's pressure switch
+#define COMP_RELAY 1 // The compressor's spike relay
+#define COMP_SWITCH 1 // The compressor's pressure switch input
 #define PICKUPARM 2
-#define PICKUPARMP 3 
 
 class RobotDemo : public SimpleRobot {
-
   RobotDrive myRobot; // robot drive system
   Joystick left, right, func; // only joystick
   Victor ballMotor, ccMotor;
-  Relay pickupArmPull, pickupArmPush;
+  Relay pickupArm;
   Compressor compress;
-  DigitalInput ccLimitA,ccLimitB; // limit switches for the Choo Choo
+  DigitalInput ccLimitA,ccLimitB, compressSwitch; // limit switches for the Choo Choo
   
 public: // These Methods can be accesed by other code
   
@@ -49,12 +51,13 @@ public: // These Methods can be accesed by other code
     right(RIGHTJ),// right drive,
     func(FUNCJ),  // other functions
     ballMotor(BALLMOTOR), ccMotor(CCMOTOR), // Motor used to bring in the ball fire it
-    pickupArmPull(PICKUPARM),
-    pickupArmPush(PICKUPARMP),// Pnuematic relay for the pickup armature
+    pickupArm(PICKUPARM),
     compress(COMP_SWITCH, COMP_RELAY), // The compressor 
-    ccLimitA(CCLIMITA),ccLimitB(CCLIMITB) { // limit switches
+    ccLimitA(CCLIMITA), ccLimitB(CCLIMITB),
+    compressSwitch(COMP_SWITCH){ // limit switches
     compress.Start();
     myRobot.SetExpiration(0.1);
+
   }
   
   // This code runs during autonomous
@@ -64,8 +67,12 @@ public: // These Methods can be accesed by other code
     //We haven't programmed autonomous yet
     //Quick Autonomous code :D 
 	//Lets just move forward... 
-	myRobot.TankDrive(.5, .5); 
-	Wait(3); 
+    SetRIOUserLED(1);
+    myRobot.TankDrive(.5, .5); 
+	Wait(.5); 
+	myRobot.TankDrive(0.0,0.0); //Stop it after three seconds 
+	if (compress.Enabled() && compressSwitch.Get())
+		compress.Stop();
     myRobot.SetSafetyEnabled(false);
   }
   
@@ -82,7 +89,7 @@ public: // These Methods can be accesed by other code
     
     while (IsOperatorControl()) {
       
-      /* Launch Codes, not activated yet
+      /* Launch Codes,  activated yet */
       if (func.GetRawButton(BALLCHARGE) && !(ccLimitA.Get()||ccLimitB.Get())) {
         ccMotor.Set(0.75);
       } else if (func.GetRawButton(BALLLAUNCH) && (ccLimitA.Get()||ccLimitB.Get())) {
@@ -90,7 +97,13 @@ public: // These Methods can be accesed by other code
       } else {
         ccMotor.Set(0);
       }
-      */
+      //Control the compressor (manually)
+      if (!(compressSwitch.Get() && !(compress.Enabled()))){
+    	  compress.Start();
+      }
+      else if( compressSwitch.Get() && compress.Enabled()){
+    	  compress.Stop();
+      }
       
       if (left.GetRawButton(1)) // if the left trigger is held
         scaleFactor = 1.0; // TURBO MODE
@@ -115,14 +128,14 @@ public: // These Methods can be accesed by other code
         ballMotor.Set(0.0); // else don't run the motor
       
       /* This code is for when we add the feeder to the robot
-       * However it is not ready yet so I have disabled it.
-      if (func.GetRawButton(2)) { // if button 2 is pressed
-        pickupArmPull
-      } else if (func.GetRawButton(3)) { // else if button 3 is pressed
-        pickupArmPush// move ball feeder down
+       * However it is not ready yet so I have disabled it. */ 
+      if (func.GetRawButton(PICKUPPUSH)) { // if button 2 is pressed
+    	pickupArm.Set(Relay::kForward); 
+      } else if (func.GetRawButton(PICKUPPULL)) { // else if button 3 is pressed
+        pickupArm.Set(Relay::kReverse); 
       } else {
         // don't move feeder
-      } */
+      } 
       
       Wait(0.005);        // wait for a motor update time
     }
