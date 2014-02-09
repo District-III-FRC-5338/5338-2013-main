@@ -111,8 +111,8 @@ class RobotDemo: public SimpleRobot {
           scaleFactor = 0.5; // else let us drive precisely
 
         //set the power for the to the Y-axes of the Joystick multiplied by the scale factor
-        leftpow = left.GetY() * scaleFactor;
-        rightpow = right.GetY() * scaleFactor;
+        leftpow = -left.GetY() * scaleFactor;
+        rightpow = -right.GetY() * scaleFactor;
         
         if (right.GetRawButton(1))
           leftpow = rightpow; // If right trigger is held, let us drive straight
