@@ -17,7 +17,8 @@
 #define PICKUPPUSH 5
 #define PICKUPPULL 3
 #define SPINBALLS  1
-
+#define TURBO 1
+#define STRAIGHT 1
 #define CCLIMITA 3
 #define CCLIMITB 2
 
@@ -87,25 +88,25 @@ class RobotDemo: public SimpleRobot {
       float leftpow, rightpow; // Power for the left and right motors
 
       while (IsOperatorControl()) {
-        SetRIOUserLED(((loopcount++)%2));
+        SetRIOUserLED(((loopcount++)%2));  //This is just to turn on the cRIO LED
         /* Launch Codes,  activated yet */
-        if (func.GetRawButton(BALLCHARGE)
+        if (func.GetRawButton(BALLCHARGE)  //Get the catapult ready 
             && !(ccLimitA.Get() || ccLimitB.Get())) {
           ccMotor.Set(0.75);
         } else if (func.GetRawButton(BALLLAUNCH) && (ccLimitA.Get()
-            || ccLimitB.Get())) {
-          ccMotor.Set(0.75);
+            || ccLimitB.Get())) {         //If the launch button is pressed AND the catapult is ready
+          ccMotor.Set(0.75);              //LAUNCH
         } else {
           ccMotor.Set(0);
         }
-        //Control the compressor (manually)
+        //Control the compressor automatically to maintain pressure. 
         if (!(compressSwitch.Get() && !(compress.Enabled()))) {
           compress.Start();
         } else if (compressSwitch.Get() && compress.Enabled()) {
           compress.Stop();
         }
 
-        if (left.GetRawButton(1)) // if the left trigger is held
+        if (left.GetRawButton(TURBO)) // if the left trigger is held
           scaleFactor = 1.0; // TURBO MODE
         else
           scaleFactor = 0.5; // else let us drive precisely
@@ -114,7 +115,7 @@ class RobotDemo: public SimpleRobot {
         leftpow = left.GetY() * scaleFactor;
         rightpow = right.GetY() * scaleFactor;
         
-        if (right.GetRawButton(1))
+        if (right.GetRawButton(STRAIGHT))
           leftpow = rightpow; // If right trigger is held, let us drive straight
 
         myRobot.TankDrive(leftpow, rightpow); // drive tank style
