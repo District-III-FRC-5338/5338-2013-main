@@ -28,9 +28,9 @@
 #define CCMOTOR 6
 
 //Pneumatic defines
-#define COMP_RELAY 1 // The compressor's spike relay
-#define COMP_SWITCH 1 // The compressor's pressure switch input
-#define PICKUPARM 2
+#define COMP_RELAY 1 // The compressor's spike relay (plugged into the relay)
+#define COMP_SWITCH 1 // The compressor's pressure switch input (plugged into ground and input)
+#define PICKUPARM 2 // The port the dual solenoid for the compressor it plugged into
 
 class RobotDemo: public SimpleRobot {
     RobotDrive myRobot; // robot drive system
@@ -66,7 +66,7 @@ class RobotDemo: public SimpleRobot {
       //We haven't programmed autonomous yet
       //Quick Autonomous code :D 
       //Lets just move forward... 
-      SetRIOUserLED(1);
+      
       myRobot.TankDrive(.5, .5);
       Wait(.5);
       myRobot.TankDrive(0.0, 0.0); //Stop it after three seconds 
@@ -82,12 +82,12 @@ class RobotDemo: public SimpleRobot {
     void OperatorControl() {
       
       myRobot.SetSafetyEnabled(false);
-      
+      int loopcount = 0;
       float scaleFactor; // Factor to scale the joystick values by
       float leftpow, rightpow; // Power for the left and right motors
 
       while (IsOperatorControl()) {
-        
+        SetRIOUserLED(((loopcount++)%2));
         /* Launch Codes,  activated yet */
         if (func.GetRawButton(BALLCHARGE)
             && !(ccLimitA.Get() || ccLimitB.Get())) {
@@ -111,8 +111,8 @@ class RobotDemo: public SimpleRobot {
           scaleFactor = 0.5; // else let us drive precisely
 
         //set the power for the to the Y-axes of the Joystick multiplied by the scale factor
-        leftpow = -left.GetY() * scaleFactor;
-        rightpow = -right.GetY() * scaleFactor;
+        leftpow = left.GetY() * scaleFactor;
+        rightpow = right.GetY() * scaleFactor;
         
         if (right.GetRawButton(1))
           leftpow = rightpow; // If right trigger is held, let us drive straight
