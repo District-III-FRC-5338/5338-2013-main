@@ -33,7 +33,6 @@
 #define COMP_RELAY 1 // The compressor's spike relay (plugged into the relay)
 #define COMP_SWITCH 1 // The compressor's pressure switch input (plugged into ground and input)
 #define PICKUPARM 2 // The port the dual solenoid for the compressor it plugged into
-
 class RobotDemo: public SimpleRobot {
     RobotDrive myRobot; // robot drive system
     Joystick left, right, func; // only joystick
@@ -49,14 +48,16 @@ class RobotDemo: public SimpleRobot {
     //it uses an initializer list to initalize variables used by this class
 
     RobotDemo() :
-      myRobot(DRIVEMOTORL, DRIVEMOTORR), // init drive system with both motors
+          myRobot(DRIVEMOTORL, DRIVEMOTORR), // init drive system with both motors
           left(LEFTJ), // init joysticks, left drive,
           right(RIGHTJ),// right drive,
           func(FUNCJ), // other functions
-          ballMotor(BALLMOTOR), ccMotor(CCMOTOR), // Motor used to bring in the ball fire it
-          pickupArm(PICKUPARM), compress(COMP_SWITCH, COMP_RELAY), // The compressor 
+          ballMotor(BALLMOTOR),
+          ccMotor(CCMOTOR), // Motor used to bring in the ball fire it
+          pickupArm(PICKUPARM),
+          compress(COMP_SWITCH, COMP_RELAY), // The compressor 
           ccLimitA(CCLIMITA), ccLimitB(CCLIMITB), compressSwitch(COMP_SWITCH),
-          autoRecharge(true){ // limit switches
+          autoRecharge(true) { // limit switches
       compress.Start();
       myRobot.SetExpiration(0.1);
       
@@ -69,7 +70,7 @@ class RobotDemo: public SimpleRobot {
       //We haven't programmed autonomous yet
       //Quick Autonomous code :D 
       //Lets just move forward... 
-      
+
       myRobot.TankDrive(.5, .5);
       Wait(.5);
       myRobot.TankDrive(0.0, 0.0); //Stop it after three seconds 
@@ -90,24 +91,14 @@ class RobotDemo: public SimpleRobot {
       float leftpow, rightpow; // Power for the left and right motors
 
       while (IsOperatorControl()) {
-        SetRIOUserLED(((loopcount++)%2));  //This is just to turn on the cRIO LED
+        SetRIOUserLED(((loopcount++) % 2)); //This is just to turn on the cRIO LED
         /* Launch Codes,  activated yet */
-        if( func.GetRawButton(TOGGLEAUTO)){
-          autoRecharge = !autoRecharge; 
-        }
-        else if (func.GetRawButton(BALLLAUNCH) && 
-            (ccLimitA.Get()|| ccLimitB.Get())) {         //If the launch button is pressed AND the catapult is ready
-                  ccMotor.Set(0.75);
-        } 
-        else if (autoRecharge && !(ccLimitA.Get() || ccLimitB.Get())) {
-          ccMotor.Set(0.75);                         //LAUNCH
-        }
-        else if (func.GetRawButton(BALLCHARGE) && !(autoRecharge) && 
-            !(ccLimitA.Get() || ccLimitB.Get())){
-          ccMotor.Set(0.75);
-        }
-        else {
-          ccMotor.Set(0);
+        if (func.GetRawButton(BALLLAUNCH)){
+          ccMotor.Set(.75);
+        } else if (ccLimitA.Get() || ccLimitB.Get()){
+          ccMotor.Set(0.0); 
+        } else if (!(ccLimitA.Get() || ccLimitB.Get())){
+          ccMotor.Set(.75);
         }
         //Control the compressor automatically to maintain pressure. 
         if (!(compressSwitch.Get() && !(compress.Enabled()))) {
