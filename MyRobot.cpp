@@ -13,14 +13,15 @@
 
 //Joystick Buttons
 #define BALLCHARGE 4
-#define BALLLAUNCH 7
+#define BALLLAUNCH 1
 #define PICKUPPUSH 5
 #define PICKUPPULL 3
-#define SPINBALLS  1
+#define SPINBALLS  2
 #define TURBO 1
 #define STRAIGHT 1
 #define CCLIMITA 3
 #define CCLIMITB 2
+#define TOGGLEAUTO 11
 
 //Defines for each motor
 #define DRIVEMOTORL 1
@@ -40,7 +41,7 @@ class RobotDemo: public SimpleRobot {
     Relay pickupArm;
     Compressor compress;
     DigitalInput ccLimitA, ccLimitB, compressSwitch; // limit switches for the Choo Choo
-
+    bool autoRecharge;
   public:
     // These Methods can be accesed by other code
 
@@ -54,7 +55,8 @@ class RobotDemo: public SimpleRobot {
           func(FUNCJ), // other functions
           ballMotor(BALLMOTOR), ccMotor(CCMOTOR), // Motor used to bring in the ball fire it
           pickupArm(PICKUPARM), compress(COMP_SWITCH, COMP_RELAY), // The compressor 
-          ccLimitA(CCLIMITA), ccLimitB(CCLIMITB), compressSwitch(COMP_SWITCH) { // limit switches
+          ccLimitA(CCLIMITA), ccLimitB(CCLIMITB), compressSwitch(COMP_SWITCH),
+          autoRecharge(true){ // limit switches
       compress.Start();
       myRobot.SetExpiration(0.1);
       
@@ -90,13 +92,21 @@ class RobotDemo: public SimpleRobot {
       while (IsOperatorControl()) {
         SetRIOUserLED(((loopcount++)%2));  //This is just to turn on the cRIO LED
         /* Launch Codes,  activated yet */
-        if (func.GetRawButton(BALLCHARGE)  //Get the catapult ready 
-            && !(ccLimitA.Get() || ccLimitB.Get())) {
+        if( func.GetRawButton(TOGGLEAUTO)){
+          autoRecharge = !autoRecharge; 
+        }
+        else if (func.GetRawButton(BALLLAUNCH) && 
+            (ccLimitA.Get()|| ccLimitB.Get())) {         //If the launch button is pressed AND the catapult is ready
+                  ccMotor.Set(0.75);
+        } 
+        else if (autoRecharge && !(ccLimitA.Get() || ccLimitB.Get())) {
+          ccMotor.Set(0.75);                         //LAUNCH
+        }
+        else if (func.GetRawButton(BALLCHARGE) && !(autoRecharge) && 
+            !(ccLimitA.Get() || ccLimitB.Get())){
           ccMotor.Set(0.75);
-        } else if (func.GetRawButton(BALLLAUNCH) && (ccLimitA.Get()
-            || ccLimitB.Get())) {         //If the launch button is pressed AND the catapult is ready
-          ccMotor.Set(0.75);              //LAUNCH
-        } else {
+        }
+        else {
           ccMotor.Set(0);
         }
         //Control the compressor automatically to maintain pressure. 
