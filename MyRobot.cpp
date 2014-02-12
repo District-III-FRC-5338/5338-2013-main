@@ -97,7 +97,7 @@ class RobotDemo: public SimpleRobot {
           ccMotor.Set(.75);
         } else if (ccLimitA.Get() || ccLimitB.Get()){
           ccMotor.Set(0.0); 
-        } else if (!(ccLimitA.Get() || ccLimitB.Get())){
+        } else{
           ccMotor.Set(.75);
         }
         //Control the compressor automatically to maintain pressure. 
