@@ -1,6 +1,6 @@
 #include <WPILib.h>
 #include <Utility.h>
-#include <Relay.h> 
+#include <Relay.h>  
 /**
  * Code for Team 5338 RoboLoCos robotics
  */
@@ -16,12 +16,13 @@
 #define BALLLAUNCH 1
 #define PICKUPPUSH 5
 #define PICKUPPULL 3
-#define SPINBALLS  2
+#define SPINBALL  2
 #define TURBO 1
 #define STRAIGHT 1
 #define CCLIMITA 3
 #define CCLIMITB 2
 #define TOGGLEAUTO 11
+#define OVERRIDE 12
 
 //Defines for each motor
 #define DRIVEMOTORL 1
@@ -95,11 +96,15 @@ class RobotDemo: public SimpleRobot {
         /* Launch Codes,  activated yet */
         if (func.GetRawButton(BALLLAUNCH)){
           ccMotor.Set(.75);
-        } else if (ccLimitA.Get() || ccLimitB.Get()){
+        } else {
+          ccMotor.Set(0.0);
+        }
+        /*else if (ccLimitA.Get() || ccLimitB.Get()){
+        }
           ccMotor.Set(0.0); 
         } else{
           ccMotor.Set(.75);
-        }
+        }*/
         //Control the compressor automatically to maintain pressure. 
         if (!(compressSwitch.Get() && !(compress.Enabled()))) {
           compress.Start();
@@ -122,9 +127,9 @@ class RobotDemo: public SimpleRobot {
         myRobot.TankDrive(leftpow, rightpow); // drive tank style
 
         // safety override for secondary driver
-        if (func.GetRawButton(5)) // if button 5 on the control joystick is pressed
+        if (func.GetRawButton(OVERRIDE)) // if button 5 on the control joystick is pressed
           myRobot.TankDrive(0.0, 0.0); // stop the motors
-        if (func.GetRawButton(1)) // if the trigger on the function joystick is pressed
+        if (func.GetRawButton(SPINBALL)) // if the trigger on the function joystick is pressed
           ballMotor.Set(0.5); // run the ball pickup motor
         else
           ballMotor.Set(0.0); // else don't run the motor
