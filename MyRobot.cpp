@@ -16,7 +16,7 @@
 #define BALLLAUNCH 1
 #define PICKUPPUSH 5
 #define PICKUPPULL 3
-#define SPINBALL  2
+#define SPINBALL 2
 #define TURBO 1
 #define STRAIGHT 1
 #define CCLIMITA 3
@@ -27,8 +27,8 @@
 //Defines for each motor
 #define DRIVEMOTORL 1
 #define DRIVEMOTORR 2
-#define BALLMOTOR 6
-#define CCMOTOR 7
+#define BALLMOTOR 7
+#define CCMOTOR 6
 
 //Pneumatic defines
 #define COMP_RELAY 1 // The compressor's spike relay (plugged into the relay)
@@ -59,6 +59,7 @@ class RobotDemo: public SimpleRobot {
           compress(COMP_SWITCH, COMP_RELAY), // The compressor 
           ccLimitA(CCLIMITA), ccLimitB(CCLIMITB), compressSwitch(COMP_SWITCH),
           autoRecharge(true) { // limit switches
+      compress.Start();
       myRobot.SetExpiration(0.1);
       
     }
@@ -93,7 +94,7 @@ class RobotDemo: public SimpleRobot {
       while (IsOperatorControl()) {
         SetRIOUserLED(((loopcount++) % 2)); //This is just to turn on the cRIO LED
         /* Launch Codes,  activated yet */
-        if (func.GetRawButton(BALLLAUNCH)){ // if the ball lunch 
+        if (func.GetRawButton(BALLLAUNCH)){
           ccMotor.Set(.75);
         } else {
           ccMotor.Set(0.0);
@@ -155,5 +156,4 @@ class RobotDemo: public SimpleRobot {
     }
 };
 
-START_ROBOT_CLASS(RobotDemo)
-;
+START_ROBOT_CLASS(RobotDemo);
