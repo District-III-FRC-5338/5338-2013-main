@@ -16,6 +16,7 @@
 #define BALLLAUNCH 1
 #define PICKUPPUSH 5
 #define PICKUPPULL 3
+#define ALTLAUNCH 8
 #define SPINBALL 2
 #define TURBO 1
 #define STRAIGHT 1
@@ -95,7 +96,10 @@ class RobotDemo: public SimpleRobot {
         SetRIOUserLED(((loopcount++) % 2)); //This is just to turn on the cRIO LED
         /* Launch Codes,  activated yet */
         if (func.GetRawButton(BALLLAUNCH)){
-          ccMotor.Set(.75);
+          ccMotor.Set(.75); // ACTUALLY THE PICKUP MOTOR
+        }
+        else if (func.GetRawButton(ALTLAUNCH)){
+          ccMotor.Set(.9);
         } else {
           ccMotor.Set(0.0);
         }
