@@ -96,14 +96,11 @@ class RobotDemo: public SimpleRobot {
         SetRIOUserLED(((loopcount++) % 2)); //This is just to turn on the cRIO LED
         /* Launch Codes,  activated yet */
         if (func.GetRawButton(BALLLAUNCH)){
-<<<<<<< HEAD
           ccMotor.Set(.75); // ACTUALLY THE PICKUP MOTOR
         }
         else if (func.GetRawButton(ALTLAUNCH)){
           ccMotor.Set(.9);
-=======
-          ccMotor.Set(.75);
->>>>>>> stable
+        
         } else {
           ccMotor.Set(0.0);
         }
