@@ -20,16 +20,15 @@
 #define SPINBALL 2
 #define TURBO 1
 #define STRAIGHT 1
-#define CCLIMITA 3
-#define CCLIMITB 2
+#define CCLIMIT 2
 #define TOGGLEAUTO 11
 #define OVERRIDE 12
 
 //Defines for each motor
 #define DRIVEMOTORL 1
 #define DRIVEMOTORR 2
-#define BALLMOTOR 7
-#define CCMOTOR 6
+#define BALLMOTOR 6
+#define CCMOTOR 7
 
 //Pneumatic defines
 #define COMP_RELAY 1 // The compressor's spike relay (plugged into the relay)
@@ -41,7 +40,7 @@ class RobotDemo: public SimpleRobot {
     Victor ballMotor, ccMotor;
     Relay pickupArm;
     Compressor compress;
-    DigitalInput ccLimitA, ccLimitB, compressSwitch; // limit switches for the Choo Choo
+    DigitalInput ccLimit, compressSwitch; // limit switches for the Choo Choo
     bool autoRecharge;
   public:
     // These Methods can be accesed by other code
@@ -58,8 +57,8 @@ class RobotDemo: public SimpleRobot {
           ccMotor(CCMOTOR), // Motor used to bring in the ball fire it
           pickupArm(PICKUPARM),
           compress(COMP_SWITCH, COMP_RELAY), // The compressor 
-          ccLimitA(CCLIMITA), ccLimitB(CCLIMITB), compressSwitch(COMP_SWITCH),
-          autoRecharge(true) { // limit switches
+          ccLimit(CCLIMIT), 
+          compressSwitch(COMP_SWITCH) { // limit switches
       compress.Start();
       myRobot.SetExpiration(0.1);
       
@@ -72,13 +71,34 @@ class RobotDemo: public SimpleRobot {
       //We haven't programmed autonomous yet
       //Quick Autonomous code :D 
       //Lets just move forward... 
-
+      /*
       myRobot.TankDrive(.5, .5);
       Wait(.5);
       myRobot.TankDrive(0.0, 0.0); //Stop it after three seconds 
       if (compress.Enabled() && compressSwitch.Get())
         compress.Stop();
       myRobot.SetSafetyEnabled(false);
+    */ /*
+      float forwardtime = 0;
+      float settime = 0; 
+      ccMotor.Set(0.5);
+      Wait(settime);
+      ccMotor.Set(0.0);
+      myRobot.TankDrive(.5,.5); //Move Forwards
+      pickupArm.Set(Relay::kForward);
+      ballMotor.Set(0.8);
+      Wait(forwardtime);
+      myRobot.TankDrive(0.0,0.0);
+      ballMotor.Set(0.0);
+      ccMotor.Set(0.9);
+      Wait(1); 
+      ccMotor.Set(0.0);
+      */
+      myRobot.TankDrive(.5,.5); 
+      Wait(2);
+      myRobot.TankDrive(0.0,0,0); 
+  
+      
     }
     
     // This code runs during the tele-operated period
@@ -95,7 +115,7 @@ class RobotDemo: public SimpleRobot {
       while (IsOperatorControl()) {
         SetRIOUserLED(((loopcount++) % 2)); //This is just to turn on the cRIO LED
         /* Launch Codes,  activated yet */
-        if (func.GetRawButton(BALLLAUNCH)){
+       /* if (func.GetRawButton(BALLLAUNCH)){
           ccMotor.Set(.75); // ACTUALLY THE PICKUP MOTOR
         }
         else if (func.GetRawButton(ALTLAUNCH)){
@@ -104,12 +124,20 @@ class RobotDemo: public SimpleRobot {
         } else {
           ccMotor.Set(0.0);
         }
-        /*else if (ccLimitA.Get() || ccLimitB.Get()){
+        else if (ccLimitA.Get() || ccLimitB.Get()){
         }
           ccMotor.Set(0.0); 
         } else{
           ccMotor.Set(.75);
-        }*/
+        }*/ 
+      
+        if (func.GetRawButton(BALLCHARGE) && ! ccLimit.Get()){
+            ccMotor.Set(.75); 
+        } else if (func.GetRawButton(BALLLAUNCH)){
+            ccMotor.Set(0.75); 
+        } else {
+            ccMotor.Set(0.0); 
+        }
         //Control the compressor automatically to maintain pressure. 
         if (!(compressSwitch.Get() && !(compress.Enabled()))) {
           compress.Start();
@@ -117,25 +145,30 @@ class RobotDemo: public SimpleRobot {
           compress.Stop();
         }
 
-        if (left.GetRawButton(TURBO)) // if the left trigger is held
-          scaleFactor = 1.0; // TURBO MODE
+        if (left.GetRawButton(TURBO) && !func.GetRawButton(OVERRIDE)) // if the left trigger is held
+          scaleFactor = 1; // TURBO MODE
+        else if (func.GetRawButton(OVERRIDE))
+          scaleFactor = 0; 
         else
-          scaleFactor = 0.5; // else let us drive precisely
-
+          scaleFactor = 0.4; // else let us drive precisely
+         
         //set the power for the to the Y-axes of the Joystick multiplied by the scale factor
         leftpow = left.GetY() * scaleFactor;
         rightpow = right.GetY() * scaleFactor;
         
         if (right.GetRawButton(STRAIGHT))
           leftpow = rightpow; // If right trigger is held, let us drive straight
-
-        myRobot.TankDrive(leftpow, rightpow); // drive tank style
-
+        if(!func.GetRawButton(OVERRIDE))
+          myRobot.TankDrive(leftpow, rightpow); // drive tank style
+        else
+          myRobot.TankDrive(0.0,0.0);
         // safety override for secondary driver
         if (func.GetRawButton(OVERRIDE)) // if button 5 on the control joystick is pressed
           myRobot.TankDrive(0.0, 0.0); // stop the motors
         if (func.GetRawButton(SPINBALL)) // if the trigger on the function joystick is pressed
-          ballMotor.Set(0.5); // run the ball pickup motor
+          ballMotor.Set(0.75); // run the ball pickup motor
+        else if (func.GetRawButton(ALTLAUNCH))
+          ballMotor.Set(0.9);
         else
           ballMotor.Set(0.0); // else don't run the motor
 
@@ -146,7 +179,7 @@ class RobotDemo: public SimpleRobot {
         } else if (func.GetRawButton(PICKUPPULL)) { // else if button 3 is pressed
           pickupArm.Set(Relay::kReverse);
         } else {
-          // don't move feeder
+          // don't mo ve feeder
         }
         
         Wait(0.005); // wait for a motor update time
