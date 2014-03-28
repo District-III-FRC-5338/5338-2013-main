@@ -93,11 +93,54 @@ class RobotDemo: public SimpleRobot {
       ccMotor.Set(0.9);
       Wait(1); 
       ccMotor.Set(0.0);
-      */
+      *//*
       myRobot.TankDrive(.5,.5); 
       Wait(2);
       myRobot.TankDrive(0.0,0,0); 
-  
+      
+      
+  */ 
+      /*pickupArm.Set(Relay::kForward); 
+      while(!ccLimit.Get()){
+        ccMotor.Set(.25); 
+      }
+      ccMotor.Set(0.0);
+      ballMotor.Set(.5); 
+      Wait(2); 
+      ballMotor.Set(0.0); 
+      myRobot.TankDrive(-.5,-.5); 
+      Wait(2); 
+      myRobot.TankDrive(0.0,0.0); 
+      ccMotor.Set(.25); 
+      Wait(1); 
+      */
+      myRobot.TankDrive(-.5,-.5);
+      Wait(3);
+      myRobot.TankDrive(0.0,0.0); 
+      
+      
+      
+      
+      /*int state = 0;
+      Timer timer;
+      timer.Start()
+      
+      while (IsAutonomous())
+      {
+        switch (state)
+        {
+        case 0:
+          
+          if (timer.HasPeriodPassed(2.0))
+            state = 1;
+        case 1:
+          ballMotor.Set(0)
+          state = 2;
+          break;
+        }
+        
+        Wait(0.04);
+      }*/
       
     }
     
@@ -150,7 +193,7 @@ class RobotDemo: public SimpleRobot {
         else if (func.GetRawButton(OVERRIDE))
           scaleFactor = 0; 
         else
-          scaleFactor = 0.4; // else let us drive precisely
+          scaleFactor = 0.5; // else let us drive precisely
          
         //set the power for the to the Y-axes of the Joystick multiplied by the scale factor
         leftpow = left.GetY() * scaleFactor;
@@ -165,10 +208,11 @@ class RobotDemo: public SimpleRobot {
         // safety override for secondary driver
         if (func.GetRawButton(OVERRIDE)) // if button 5 on the control joystick is pressed
           myRobot.TankDrive(0.0, 0.0); // stop the motors
+        
         if (func.GetRawButton(SPINBALL)) // if the trigger on the function joystick is pressed
           ballMotor.Set(0.75); // run the ball pickup motor
         else if (func.GetRawButton(ALTLAUNCH))
-          ballMotor.Set(0.9);
+          ballMotor.Set(-0.75);
         else
           ballMotor.Set(0.0); // else don't run the motor
 
