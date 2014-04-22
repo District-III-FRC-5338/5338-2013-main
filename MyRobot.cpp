@@ -59,7 +59,7 @@ class RobotDemo: public SimpleRobot {
           compress(COMP_SWITCH, COMP_RELAY), // The compressor 
           ccLimit(CCLIMIT), 
           compressSwitch(COMP_SWITCH) { // limit switches
-      compress.Start();
+      //compress.Start();
       myRobot.SetExpiration(0.1);
       
     }
@@ -68,78 +68,51 @@ class RobotDemo: public SimpleRobot {
     // It does nothing right now
 
     void Autonomous() {
-      //We haven't programmed autonomous yet
-      //Quick Autonomous code :D 
-      //Lets just move forward... 
-      /*
-      myRobot.TankDrive(.5, .5);
-      Wait(.5);
-      myRobot.TankDrive(0.0, 0.0); //Stop it after three seconds 
-      if (compress.Enabled() && compressSwitch.Get())
-        compress.Stop();
+       //what we used to have 
       myRobot.SetSafetyEnabled(false);
-    */ /*
-      float forwardtime = 0;
-      float settime = 0; 
-      ccMotor.Set(0.5);
-      Wait(settime);
-      ccMotor.Set(0.0);
-      myRobot.TankDrive(.5,.5); //Move Forwards
-      pickupArm.Set(Relay::kForward);
-      ballMotor.Set(0.8);
-      Wait(forwardtime);
-      myRobot.TankDrive(0.0,0.0);
-      ballMotor.Set(0.0);
-      ccMotor.Set(0.9);
-      Wait(1); 
-      ccMotor.Set(0.0);
-      *//*
-      myRobot.TankDrive(.5,.5); 
-      Wait(2);
-      myRobot.TankDrive(0.0,0,0); 
-      
-      
-  */ 
-      /*pickupArm.Set(Relay::kForward); 
-      while(!ccLimit.Get()){
-        ccMotor.Set(.25); 
-      }
-      ccMotor.Set(0.0);
-      ballMotor.Set(.5); 
-      Wait(2); 
-      ballMotor.Set(0.0); 
-      myRobot.TankDrive(-.5,-.5); 
+      myRobot.TankDrive(-.5, -.5); 
       Wait(2); 
       myRobot.TankDrive(0.0,0.0); 
-      ccMotor.Set(.25); 
-      Wait(1); 
-      */
-      myRobot.TankDrive(-.5,-.5);
-      Wait(3);
-      myRobot.TankDrive(0.0,0.0); 
-      
-      
+        //*/
       
       
       /*int state = 0;
       Timer timer;
       timer.Start()
       
-      while (IsAutonomous())
-      {
-        switch (state)
-        {
-        case 0:
-          
-          if (timer.HasPeriodPassed(2.0))
-            state = 1;
-        case 1:
-          ballMotor.Set(0)
-          state = 2;
-          break;
+      while (IsAutonomous()){
+        if(!ccLimit.Get())
+          ccMotor.Set(0.25); 
+        else 
+          ccMotor.Set(0.0); 
+        switch (state){
+          case 0:
+            pickupArm.Set(Relay::kForward);
+            state = 1; 
+          case 1:
+            ballMotor.Set(.5); 
+            if(timer.HasPeriodPassed(4.0)){
+              timer.Reset();   
+              state = 2;
+            }
+            break;
+          case 2: 
+            ballMotor.Set(0.0); 
+            myRobot.TankDrive(.5, .5); //figure out which side goes which way  
+            if(timer.HasPeriodPassed(2.0)){
+              myRobot.TankDrive(0.0,0.0);
+              state = 3;
+              timer.Reset();   
+            }
+          case 3: 
+            ccMotor.Set(1); 
+            if(timer.HasPeriodPassed(0.1)){
+              ccMotor.Set(0.0);
+              state = 4;  
+            }   
         }
         
-        Wait(0.04);
+        Wait(0.05);
       }*/
       
     }
