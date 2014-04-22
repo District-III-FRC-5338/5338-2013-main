@@ -10,12 +10,10 @@ Autonomous Code is omitted since public demos will not use an autonomous.
 Teleop Controls
 ===============
 
-Controllers
------------
-
 ### Drive Joysticks
 A left and right joystick are used for driving the robot.
 The left joystick trigger can be used for making the robot drive straight. 
+The robot uses an override joystick in case the public user does something bad (like running into a wall). 
 
 ### Functionality
 The right joystick also controls functionality. 
