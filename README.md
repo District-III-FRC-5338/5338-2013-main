@@ -26,5 +26,24 @@ The functionality is as follows
 </tr> 
 <tr> 
 <td> 1 </td> <td> Launch ball </td> 
+</tr>
+<tr>  
+<td> 2 </td> <td> Spin BallMotor @ 50% </td> 
+</tr>
+<tr> 
+<td> 3 </td> <td> Retract the Arm  </td> 
 </tr> 
-<td> 
+<tr> 
+<td> 4 </td> <td>Prime the Catapult </td> 
+</tr> 
+
+<tr> 
+<td> 5 </td> <td>Extend the Arm </td> 
+</tr> 
+ 
+<tr> 
+<td> 8 </td> <td> Spin BallMotor @ 80% </td> 
+</tr> 
+</table> 
+The same buttons apply for the functionality/override joystick, as long as button 12 is pressed on the override joystick. 
+Button 12 allows the override joystick to have complete control of the robot. 
