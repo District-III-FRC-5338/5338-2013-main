@@ -68,80 +68,27 @@ class RobotDemo: public SimpleRobot {
     // It does nothing right now
 
     void Autonomous() {
-      //We haven't programmed autonomous yet
-      //Quick Autonomous code :D 
-      //Lets just move forward... 
-      /*
-      myRobot.TankDrive(.5, .5);
-      Wait(.5);
-      myRobot.TankDrive(0.0, 0.0); //Stop it after three seconds 
-      if (compress.Enabled() && compressSwitch.Get())
-        compress.Stop();
-      myRobot.SetSafetyEnabled(false);
-    */ /*
-      float forwardtime = 0;
-      float settime = 0; 
-      ccMotor.Set(0.5);
-      Wait(settime);
-      ccMotor.Set(0.0);
-      myRobot.TankDrive(.5,.5); //Move Forwards
-      pickupArm.Set(Relay::kForward);
-      ballMotor.Set(0.8);
-      Wait(forwardtime);
-      myRobot.TankDrive(0.0,0.0);
-      ballMotor.Set(0.0);
-      ccMotor.Set(0.9);
-      Wait(1); 
-      ccMotor.Set(0.0);
-      *//*
-      myRobot.TankDrive(.5,.5); 
-      Wait(2);
-      myRobot.TankDrive(0.0,0,0); 
-      
-      
-  */ 
-      /*pickupArm.Set(Relay::kForward); 
-      while(!ccLimit.Get()){
-        ccMotor.Set(.25); 
-      }
-      ccMotor.Set(0.0);
-      ballMotor.Set(.5); 
-      Wait(2); 
-      ballMotor.Set(0.0); 
-      myRobot.TankDrive(-.5,-.5); 
-      Wait(2); 
-      myRobot.TankDrive(0.0,0.0); 
-      ccMotor.Set(.25); 
-      Wait(1); 
-      */
-      myRobot.TankDrive(-.5,-.5);
-      Wait(3);
-      myRobot.TankDrive(0.0,0.0); 
-      
-      
-      
-      
-      /*int state = 0;
-      Timer timer;
-      timer.Start()
-      
-      while (IsAutonomous())
-      {
-        switch (state)
-        {
+      int state = 0;
+      Timer timez;
+      while (IsAutonomous()) {
+        switch (state) {
         case 0:
-          
-          if (timer.HasPeriodPassed(2.0))
-            state = 1;
+          timez.Reset();
+          timez.Start();
+          state = 1;
+          break;
         case 1:
-          ballMotor.Set(0)
-          state = 2;
+          if (timez.Get() > 3) {
+            state = 2;
+          } else {
+            myRobot.TankDrive(0.5,0.5);
+          }
+          break;
+        case 2:
+          myRobot.TankDrive(0.0,0.0);
           break;
         }
-        
-        Wait(0.04);
-      }*/
-      
+      }
     }
     
     // This code runs during the tele-operated period
